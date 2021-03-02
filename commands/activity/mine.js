@@ -1,20 +1,21 @@
-const items = ['fish', 'boot', 'kelp', 'tix', 'fish', 'boot', 'kelp', 'boot', 'kelp', 'fish', 'boot', 'kelp', 'kelp'];
+const items = ['rock', 'bone', 'tix', 'shell', 'rock', 'bone', 'rock'];
+
 const dataHelper = require('../../util/dataHelper');
 
 module.exports = {
-    name: 'fish',
-    description: 'Go fishing',
+    name: 'mine',
+    description: 'Go an explore a mine.',
     guildOnly: true,
     cooldown: 30,
     async execute(message, args) {
         let userId = message.author.id;
         let account = await dataHelper.getAccount(userId);
 
-        dataHelper.incrementStatForAccount(account, 'fishing');
+        dataHelper.incrementStatForAccount(account, 'mining');
 
         let chance = Math.floor(Math.random()*100);
 
-        if (chance <= 40) {
+        if (chance <= 60) {
             let itemChance = Math.floor(Math.random()*items.length);
             let item = items[itemChance];
 

@@ -40,7 +40,7 @@ client.on('message', message => {
     const channel = message.channel;
 
     //Command check
-    if (!content.startsWith(prefix) || message.author.bot) return;
+    if (!content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
     const args = content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();

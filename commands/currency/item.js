@@ -5,8 +5,7 @@ module.exports = {
     name: 'item',
     description: 'Display all items, or item specific details',
     guildOnly: true,
-    cooldown: 10,
-    owner: true,
+    cooldown: 3,
     async execute(message, args) {
         if (args.length) {
             let query = args.join(' ');

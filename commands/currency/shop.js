@@ -8,6 +8,10 @@ module.exports = {
     async execute(message, args) {
         let money = helper.getMoneyEmoji(message, 'tix');
 
+        if (args[0] === 'sellall') {
+            args[1] = 0;
+        }
+
         if (args.length == 0) {
             //display categories
             let categories = dataHelper.getCategories();
@@ -178,6 +182,27 @@ module.exports = {
                 } else {
                     return message.channel.send(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }
+            } else if (subCommand === 'sellall') {
+                let totalSold = 0;
+                let totalGain = 0;
+
+                for (var it in userInventory) {
+                    let item = userInventory[it];
+                    if (item.amount > 0) {
+                        let identifier = item.localized;
+                        let shopAmount = shopInventory[identifier]['amount'];
+                        let count = item.amount;
+                        let totalCost = item.sell*count;
+                        totalSold += count;
+                        totalGain += totalCost;
+                        await dataHelper.updateItemForAccount(userAccount, identifier, 0);
+                        await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+count);   
+                    }
+                }
+
+                await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalGain);
+                await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalGain);
+                return message.reply(`successfully sold ${totalSold} items for ${totalGain} ${money}`)
             }
         }
     }

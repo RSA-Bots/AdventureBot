@@ -34,7 +34,10 @@ module.exports = {
                     }
                 }
                 dataHelper.updateItemForAccount(account, item, amount);
-                return message.reply(`You found a ${item}`);
+
+                let name = dataHelper.getItem(item).name;
+
+                return message.reply(`You found a ${name}`);
             }
         } else {
             let bearAccount = await dataHelper.getAccount(dataHelper.BEAR_ID);

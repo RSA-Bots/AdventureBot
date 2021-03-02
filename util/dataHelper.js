@@ -95,6 +95,18 @@ function verifyIntegrity(account) {
     }
 
     if (!account.stats) { account.stats = JSON.parse(JSON.stringify(stats)) }
+
+    if (account.stats[0]) {
+        let stp = account.stats[0];
+        for (var st in stats) {
+            let stat = stats[st];
+
+            if (!stp[stat.name]) {
+                stp[st] = stat;
+            }
+        }
+    }
+
     if (!account.tools) { account.tools = JSON.parse(JSON.stringify(tools)) }
 
     return account;

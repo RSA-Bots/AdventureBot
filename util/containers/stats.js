@@ -23,5 +23,10 @@ module.exports = {
         name: 'mining',
         amount: 0,
         level: 1
+    },
+    'smelting': {
+        name: 'smelting',
+        amount: 0,
+        level: 1
     }
 }

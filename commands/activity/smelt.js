@@ -24,6 +24,10 @@ module.exports = {
         let userId = message.author.id;
         let account = await dataHelper.getAccount(userId);
 
+        if (!account.tools[0]['furnace']['owns']) {
+            return message.channel.send('You do not own the `Furnace` tool.');
+        }
+
         /** a;smelt <fuel> [fuelAmount = 1] <object> [objectAmount = 1] */
         let fuelItemQuery = args[0];
         let fuelAmount = 1;
@@ -36,8 +40,10 @@ module.exports = {
         let smeltItemQuery = args[fuelSlice];
         let smeltItemAmount = 1;
         if (parseInt(args[fuelSlice+1])) {
-            smeltItemAmount = parseInt[args[fuelSlice+1]];
+            smeltItemAmount = parseInt(args[fuelSlice+1]);
         }
+
+        console.log(fuelItemQuery, fuelAmount, smeltItemQuery, smeltItemAmount);
 
         let fuelItem = dataHelper.getItem(fuelItemQuery);
         let smeltItem = dataHelper.getItem(smeltItemQuery);
@@ -84,11 +90,9 @@ module.exports = {
 
         let userSmeltResultAmount = account.inventory[0][smeltResult.localized]['amount'];
 
-        smeltResultAmount = smeltResultAmount + userSmeltResultAmount;
-
         await dataHelper.updateItemForAccount(account, fuelItem.localized, userFuelAmount-fuelAmount);
         await dataHelper.updateItemForAccount(account, smeltItem.localized, userSmeltAmount-smeltItemAmount);
-        await dataHelper.updateItemForAccount(account, smeltResult.localized, smeltResultAmount);
+        await dataHelper.updateItemForAccount(account, smeltResult.localized, smeltResultAmount + userSmeltResultAmount);
         
         return message.channel.send(`Successfully smelted ${smeltItemAmount} ${smeltItem.name} using ${fuelAmount} ${fuelItem.name}. You gained ${smeltResultAmount} ${smeltResult.name}!`);
     }

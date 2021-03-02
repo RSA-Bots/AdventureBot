@@ -15,6 +15,6 @@ module.exports = {
 
         let balance = account.wallet[0]['tix']['amount'];
 
-        return message.channel.send(`Balance of ${member.displayName}: ${balance} ${helper.getMoneyEmoji(message)}`);
+        return message.channel.send(`Balance of ${member.displayName}: ${balance} ${helper.getMoneyEmoji(message, 'tix')}`);
     }
 }

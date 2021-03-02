@@ -46,7 +46,7 @@ module.exports = {
             let it = inventory[item];
             if (it.amount > 0) {
                 itemRet.push(`[${it.rarity.slice(0,1)}] ${it.name}: ${it.amount}`);
-                worth += it.sell;
+                worth += it.sell * it.amount;
             }
         }
 
