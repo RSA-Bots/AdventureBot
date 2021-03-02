@@ -140,6 +140,7 @@ module.exports = {
                     if (userOwns) { return message.channel.send('You already own this tool.'); }
 
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance-tool.buy);
+                    await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance+tool.buy);
                     await dataHelper.acquireTool(userAccount, tool);
 
                     return message.channel.send(`Bought ${tool.name} for ${tool.buy}`);
