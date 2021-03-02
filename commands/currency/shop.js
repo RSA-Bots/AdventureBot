@@ -20,49 +20,64 @@ module.exports = {
             let category = args[0];
 
             let categories = dataHelper.getCategories();
+            let found = false;
             for (var cat in categories) {
                 console.log(categories[cat]);
                 if (categories[cat].toLowerCase() === category.toLowerCase()) {
+                    found = true;
                     category = categories[cat];
                 }
             }
 
-            let shopAccount = await dataHelper.getAccount(-1);
-            let inventory = shopAccount.inventory[0];
+            if (!found) return message.channel.send('That is not a valid shop category.');
 
+            let shopAccount = await dataHelper.getAccount(-1);
             const embed = helper.generateEmptyEmbed('https://cdn2.iconfinder.com/data/icons/market-and-economics-21/48/23-512.png', `${category} Shop`);
 
-            let available = [];
+            if (category === 'Tools' || category === 'Appliances') {
+                let tools = shopAccount.tools[0];
 
-            for (var it in inventory) {
-                let item = inventory[it];
-                if (item.category.toLowerCase() === category.toLowerCase()) {
-                    if (item.amount > 0) {
-                        available.push(item);
+                for (var to in tools) {
+                    let tool = tools[to];
+                    let display = `${tool.name}: ${tool.buy} ${money}`
+
+                    embed.addField(display, tool.description, true);
+                }
+
+                embed.setTitle(`Tools & Appliance Shop`);
+            } else {
+                let inventory = shopAccount.inventory[0];
+                let available = [];
+    
+                for (var it in inventory) {
+                    let item = inventory[it];
+                    if (item.category.toLowerCase() === category.toLowerCase()) {
+                        if (item.amount > 0) {
+                            available.push(item);
+                        }
                     }
                 }
-            }
-
-            if (available.length) {
-                let count = 0;
-                
-                for (var it in available) {
-                    count += 1;
-                    let item = available[it];
-
-                    let display = `[${item.rarity.slice(0,1)}] ${item.name}: ${item.buy} ${money}`;
-                    let amount = `Amount in shop: ${item.amount}`;
+    
+                if (available.length) {
+                    let count = 0;
                     
-                    embed.addField(display, amount, true);
-                }
-
-                for (var i=count%3;i<3;i++) {
-                    embed.addField('\u200b', '\u200b', true);
-                }
-            } else {
-                embed.addField('\u200b', 'Alas, we do not sell cobwebs here.', false);
+                    for (var it in available) {
+                        count += 1;
+                        let item = available[it];
+    
+                        let display = `[${item.rarity.slice(0,1)}] ${item.name}: ${item.buy} ${money}`;
+                        let amount = `Amount in shop: ${item.amount}`;
+                        
+                        embed.addField(display, amount, true);
+                    }
+    
+                    for (var i=count%3;i<3;i++) {
+                        embed.addField('\u200b', '\u200b', true);
+                    }
+                } else {
+                    embed.addField('\u200b', 'Alas, we do not sell cobwebs here.', false);
+                }   
             }
-
             return message.reply(embed);
         }
 
@@ -94,6 +109,7 @@ module.exports = {
 
             if (subCommand === 'buy') {
                 let item = dataHelper.getItem(itemQuery);
+                let tool = dataHelper.getTool(itemQuery);
                 
                 if (item) {
                     let identifier = item.localized;
@@ -117,6 +133,16 @@ module.exports = {
                     await dataHelper.updateItemForAccount(userAccount, identifier, userAmount+amount);
 
                     return message.channel.send(`Bought ${amount} ${output} for ${totalCost} ${money}`);
+                } else if(tool) {
+                    let userOwns = userAccount.tools[0][tool.localized].owns;
+
+                    if (userBalance < tool.buy) { return message.channel.send('You can not afford this transaction.'); }
+                    if (userOwns) { return message.channel.send('You already own this tool.'); }
+
+                    await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance-tool.buy);
+                    await dataHelper.acquireTool(userAccount, tool);
+
+                    return message.channel.send(`Bought ${tool.name} for ${tool.buy}`);
                 } else {
                     return message.channel.send(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }

@@ -20,6 +20,10 @@ var userAccountModelSchema = new Schema({
         type: [],
         default: undefined
     },
+    tools: {
+        type: [],
+        default: undefined
+    },
     lastLogin: {
         type: Long,
         default: 0

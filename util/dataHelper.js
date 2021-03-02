@@ -8,7 +8,7 @@ let lastUpdated = null;
 let currency = require('./containers/currency');
 let items = require('./containers/item');
 let stats = require('./containers/stats');
-const { getItem } = require('./helper');
+let tools = require('./containers/tools');
 
 /** Used to check if an account should be offloaded from memory. Interval: 5 seconds */
 var offloadCheck = setInterval(checkOffload, 5000);
@@ -61,6 +61,15 @@ function offloadUserAccount(userId) {
     delete offloadTime[userId];
 }
 
+function verifyIntegrity(account) {
+    if (!account.inventory) { account.inventory = items }
+    if (!account.wallet) { account.wallet = {tix: tix} }
+    if (!account.stats) { account.stats = stats }
+    if (!account.tools) { account.tools = tools }
+
+    return account;
+}
+
 module.exports = {
     SHOP_ID: -1,
     BEAR_ID: -2,
@@ -74,7 +83,7 @@ module.exports = {
      */
     getAccount: async function(accountId) {
         if (loadedAccounts[accountId]) {
-            return loadedAccounts[accountId];
+            return verifyIntegrity(loadedAccounts[accountId]);
         } else {
             let account = await accountModel.findOne({holderId: accountId});
             let created = false;
@@ -87,14 +96,15 @@ module.exports = {
                     holderId: accountId,
                     wallet: {tix: tix},
                     inventory: items,
-                    stats: stats
+                    stats: stats,
+                    tools: tools
                 })
 
                 await account.save();
                 created = true;
             }
 
-            loadedAccounts[accountId] = account;
+            loadedAccounts[accountId] = verifyIntegrity(account);
             updateOffloadTime(accountId);
 
             if (created && accountId > 0) {
@@ -185,6 +195,45 @@ module.exports = {
             }
         }
 
+        for (var to in tools) {
+            let tool = tools[to];
+            if (!list.includes(tool.category)) {
+                list.push(tool.category);
+            }
+        }
+
         return list;
+    },
+
+    getTool: function(toolQuery) {
+        for (var it in tools) {
+            let tool = tools[it];
+            if (tool.name === toolQuery || tool.name.toLowerCase() === toolQuery.toLowerCase() ||
+                tool.id === parseInt(toolQuery) || 
+                tool.localized === toolQuery || tool.localized.toLowerCase() === toolQuery.toLowerCase()) {
+                return tool;
+            }
+        }
+
+        return null;
+    },
+
+    ownsTool: function(account, toolQuery) {
+        let tool = getTool(toolQuery);
+
+        let userTools = account.tools[0];
+
+        for (var to in userTools) {
+            let tool = userTools[to];
+            return tool.owns;
+        }
+
+        return false;
+    },
+
+    acquireTool: function(account, tool) {
+        let index = account.tools[0][tool.localized];
+        index.owns = true;
+        updateAccount(account.holderId, account);
     }
 }

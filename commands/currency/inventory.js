@@ -27,6 +27,7 @@ module.exports = {
 
         let inventory = account.inventory[0];
         let wallet = account.wallet[0];
+        let tools = account.tools[0];
 
         const embed = helper.generateEmptyEmbed(avatar, `${displayName}'s Inventory`)
 
@@ -57,6 +58,23 @@ module.exports = {
         embed.addField(title, display, true);
         embed.addField('\u200b', '\u200b', true);
 
+        let toolRet = [];
+        for (var to in tools) {
+            let tool = tools[to];
+            if (tool.owns) {
+                toolRet.push(`**${tool.name}**\n${tool.description}`);
+            }
+        }
+
+        let title2 = 'Tools/Appliances';
+        let display2 = 'No assistance provided.'
+        if (toolRet.length) {
+            display2 = toolRet.join('\n');
+        }
+
+        embed.addField(title2, display2, true);
+        embed.addField('\u200b', '\u200b', true);
+        
         return message.channel.send(embed);
     }
 }
