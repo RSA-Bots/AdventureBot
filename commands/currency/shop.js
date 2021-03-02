@@ -6,7 +6,7 @@ module.exports = {
     description: 'Interact with the Global Shop',
     guildOnly: true,
     async execute(message, args) {
-        let money = helper.getMoneyEmoji(message);
+        let money = helper.getMoneyEmoji(message, 'tix');
 
         if (args.length == 0) {
             //display categories
@@ -149,6 +149,7 @@ module.exports = {
                 }
             } else if (subCommand === 'sell') {
                 let item = dataHelper.getItem(itemQuery);
+                let tool = dataHelper.getTool(itemQuery);
                 
                 if (item) {
                     let identifier = item.localized;
@@ -172,6 +173,8 @@ module.exports = {
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalCost);
 
                     return message.channel.send(`Sold ${amount} ${output} for ${totalCost} ${money}`);
+                } else if(tool) {
+                    return message.channel.send('You can not sell Tools or Appliances.');
                 } else {
                     return message.channel.send(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }

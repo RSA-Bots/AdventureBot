@@ -9,6 +9,7 @@ let currency = require('./containers/currency');
 let items = require('./containers/item');
 let stats = require('./containers/stats');
 let tools = require('./containers/tools');
+let fuels = require('./containers/fuels');
 
 /** Used to check if an account should be offloaded from memory. Interval: 5 seconds */
 var offloadCheck = setInterval(checkOffload, 5000);
@@ -62,10 +63,39 @@ function offloadUserAccount(userId) {
 }
 
 function verifyIntegrity(account) {
-    if (!account.inventory) { account.inventory = items }
-    if (!account.wallet) { account.wallet = {tix: tix} }
-    if (!account.stats) { account.stats = stats }
-    if (!account.tools) { account.tools = tools }
+    if (!account.inventory) { account.inventory = JSON.parse(JSON.stringify(items)) }
+
+    if (account.inventory[0]) {
+        let inv = account.inventory[0];
+        for (var it in items) {
+            let item = items[it];
+            
+            if (!inv[item.localized]) {
+                inv[item.localized] = JSON.parse(JSON.stringify(item));
+            } else {
+                for (var field in item) {
+                    let value = item[field];
+                    let invItem = inv[item.localized];
+
+                    if (!invItem[field]) {
+                        invItem[field] = value;
+                    } else {
+                        if (field === 'category' && invItem[field] != value) {
+                            invItem[field] = value;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (!account.wallet) { 
+        account.wallet = JSON.parse(JSON.stringify(currency));
+        account.wallet[0].tix.amount = 500;
+    }
+
+    if (!account.stats) { account.stats = JSON.parse(JSON.stringify(stats)) }
+    if (!account.tools) { account.tools = JSON.parse(JSON.stringify(tools)) }
 
     return account;
 }
@@ -89,16 +119,9 @@ module.exports = {
             let created = false;
 
             if (!account) {
-                let tix = this.getCurrency('tix');
-                tix.amount = 500;
-
-                account = new accountModel({
+                account = verifyIntegrity(new accountModel({
                     holderId: accountId,
-                    wallet: {tix: tix},
-                    inventory: items,
-                    stats: stats,
-                    tools: tools
-                })
+                }));
 
                 await account.save();
                 created = true;
@@ -235,5 +258,9 @@ module.exports = {
         let index = account.tools[0][tool.localized];
         index.owns = true;
         updateAccount(account.holderId, account);
+    },
+
+    getFuel: function(fuelName) {
+        return fuels[fuelName] || 0;
     }
 }

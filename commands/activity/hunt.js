@@ -96,18 +96,18 @@ module.exports = {
             } else {
                 if (chance >= 80-modifier) {
                     //got into a fight with a bear, lose a random item.
-                    let items = [];
+                    let itemList = [];
                     
                     for (var index in inv) {
                         let item = inv[index];
                         if (item['amount'] > 0) {
-                            items.push(item);
+                            itemList.push(item);
                         }
                     }
     
-                    if (items.length > 0) {
-                        let random = Math.floor(Math.random()*items.length);
-                        let item = items[random];
+                    if (itemList.length > 0) {
+                        let random = Math.floor(Math.random()*itemList.length);
+                        let item = itemList[random];
                         let count = item.amount;
                         
                         let bearCount = bearInv[item.localized]['amount'];
@@ -116,7 +116,7 @@ module.exports = {
                         await dataHelper.updateItemForAccount(bearAccount, item.localized, bearCount + count);
                         
                         if (count > 1) {
-                            item = item + 's';
+                            item.name = item.name + 's';
                         }
     
                         return message.reply(`got into a fight with a bear, and lost ${count} ${item.name}`);

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const { emojiTixId } = require('../config.json');
+const { emojiTixId, robuxId, pandaCoinId } = require('../config.json');
 
 const chars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
 const displayNameCache = [];
@@ -51,8 +51,11 @@ module.exports = {
         return message.member;
     },
 
-    getMoneyEmoji: function(message) {
-        return message.guild.emojis.resolve(emojiTixId);
+    getMoneyEmoji: function(message, type) {
+        if (type === 'tix') { return message.guild.emojis.resolve(emojiTixId); }
+        if (type === 'robux') { return message.guild.emojis.resolve(robuxId); }
+        if (type === 'pandacoin') { return message.guild.emojis.resolve(pandaCoinId); }
+        return null;
     },
 
     randomColorHex: function() {

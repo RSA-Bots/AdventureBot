@@ -43,7 +43,7 @@ module.exports = {
             let itemChance = Math.floor(Math.random()*items.length);
             let item = items[itemChance];
 
-            if (item === '5 tix') {
+            if (item === 'tix') {
                 let found = Math.floor(Math.random()*4) + 1;
                 dataHelper.updateBalanceForAccount(account, 'tix', account.wallet[0]['tix']['amount'] + found);
                 return message.reply(`You found ${found} tix!`);

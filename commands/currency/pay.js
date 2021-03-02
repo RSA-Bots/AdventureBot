@@ -8,7 +8,7 @@ module.exports = {
     args: true,
     cooldown: 15,
     async execute(message, args) {
-        let money = helper.getMoneyEmoji(message);
+        let money = helper.getMoneyEmoji(message, 'tix');
 
         if (args.length < 2) { return message.channel.send('Not enough arguments provided.'); }
 

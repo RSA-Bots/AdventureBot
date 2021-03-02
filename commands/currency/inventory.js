@@ -31,12 +31,14 @@ module.exports = {
 
         const embed = helper.generateEmptyEmbed(avatar, `${displayName}'s Inventory`)
 
-        let moneyRet = [];
-        for (var currency in wallet) {
-            let cur = wallet[currency];
-            moneyRet.push(`${money}: ${cur.amount}`);
+        if (args[0] != -2) {
+            let moneyRet = [];
+            for (var currency in wallet) {
+                let cur = wallet[currency];
+                moneyRet.push(`${await helper.getMoneyEmoji(message, cur.name)}: ${cur.amount}`);
+            }
+            embed.addField('Wallet', moneyRet.join('\n'), false);
         }
-        embed.addField('Wallet', moneyRet.join('\n'), false);
 
         let worth = 0;
         let itemRet = [];
@@ -51,29 +53,31 @@ module.exports = {
         let title = 'Backpack';
         let display = 'Not even a cobweb to be seen.';
         if (itemRet.length) {
-            title = `Backpack (worth: ${worth} ${money})`
+            title = `Backpack (worth: ${worth} ${await helper.getMoneyEmoji(message, 'tix')})`
             display = itemRet.join('\n');
         }
 
         embed.addField(title, display, true);
         embed.addField('\u200b', '\u200b', true);
 
-        let toolRet = [];
-        for (var to in tools) {
-            let tool = tools[to];
-            if (tool.owns) {
-                toolRet.push(`**${tool.name}**\n${tool.description}`);
+        if (args[0] != -2) {
+            let toolRet = [];
+            for (var to in tools) {
+                let tool = tools[to];
+                if (tool.owns) {
+                    toolRet.push(`**${tool.name}**\n${tool.description}`);
+                }
             }
-        }
 
-        let title2 = 'Tools/Appliances';
-        let display2 = 'No assistance provided.'
-        if (toolRet.length) {
-            display2 = toolRet.join('\n');
-        }
+            let title2 = 'Tools/Appliances';
+            let display2 = 'No assistance provided.'
+            if (toolRet.length) {
+                display2 = toolRet.join('\n');
+            }
 
-        embed.addField(title2, display2, true);
-        embed.addField('\u200b', '\u200b', true);
+            embed.addField(title2, display2, true);
+            embed.addField('\u200b', '\u200b', true);
+        }
         
         return message.channel.send(embed);
     }
