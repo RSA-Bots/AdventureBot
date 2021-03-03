@@ -1,0 +1,24 @@
+{
+  "name": "adventurebot",
+  "version": "1.0.0",
+  "description": "RSA - Adventure Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/rsa-bots/pandaprotector.git"
+  },
+  "author": "TinyPandas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/rsa-bots/adventurebot/issues"
+  },
+  "homepage": "https://gitlab.com/rsa-bots/adventurebot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "mongoose": "^5.11.17",
+    "mongoose-long": "^0.3.2"
+  }
+}
