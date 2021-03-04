@@ -16,7 +16,7 @@ module.exports = {
             //display categories
             let categories = dataHelper.getCategories();
 
-            return message.channel.send(`Please use \`;shop [category]\` to get a list of items in that category.\n${"-".repeat(75)}\n${categories.join('\n')}`);
+            return message.reply(`Please use \`;shop [category]\` to get a list of items in that category.\n${"-".repeat(75)}\n${categories.join('\n')}`);
         }
 
         if (args.length == 1) {
@@ -33,7 +33,7 @@ module.exports = {
                 }
             }
 
-            if (!found) return message.channel.send('That is not a valid shop category.');
+            if (!found) return message.reply('That is not a valid shop category.');
 
             let shopAccount = await dataHelper.getAccount(-1);
             const embed = helper.generateEmptyEmbed('https://cdn2.iconfinder.com/data/icons/market-and-economics-21/48/23-512.png', `${category} Shop`);
@@ -126,30 +126,30 @@ module.exports = {
                         output += 's';
                     }
 
-                    if (shopAmount == 0) { return message.channel.send(`The shop does not have any ${output} to buy.`); }
-                    if (shopAmount < amount) { return message.channel.send(`The shop does not have ${amount} ${output} to buy.`); }
-                    if (!item.buyable) { return message.channel.send(`${item.name} can not be purchased.`); }
-                    if (userBalance < totalCost) { return message.channel.send('You can not afford this transaction.'); }
+                    if (shopAmount == 0) { return message.reply(`The shop does not have any ${output} to buy.`); }
+                    if (shopAmount < amount) { return message.reply(`The shop does not have ${amount} ${output} to buy.`); }
+                    if (!item.buyable) { return message.reply(`${item.name} can not be purchased.`); }
+                    if (userBalance < totalCost) { return message.reply('You can not afford this transaction.'); }
 
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance-totalCost);
                     await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance+totalCost);
                     await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount-amount);
                     await dataHelper.updateItemForAccount(userAccount, identifier, userAmount+amount);
 
-                    return message.channel.send(`Bought ${amount} ${output} for ${totalCost} ${money}`);
+                    return message.reply(`Bought ${amount} ${output} for ${totalCost} ${money}`);
                 } else if(tool) {
                     let userOwns = userAccount.tools[0][tool.localized].owns;
 
-                    if (userBalance < tool.buy) { return message.channel.send('You can not afford this transaction.'); }
-                    if (userOwns) { return message.channel.send('You already own this tool.'); }
+                    if (userBalance < tool.buy) { return message.reply('You can not afford this transaction.'); }
+                    if (userOwns) { return message.reply('You already own this tool.'); }
 
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance-tool.buy);
                     await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance+tool.buy);
                     await dataHelper.acquireTool(userAccount, tool);
 
-                    return message.channel.send(`Bought ${tool.name} for ${tool.buy}`);
+                    return message.reply(`Bought ${tool.name} for ${tool.buy}`);
                 } else {
-                    return message.channel.send(`${itemQuery.replace('@', '')} is not a valid item.`);
+                    return message.reply(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }
             } else if (subCommand === 'sell') {
                 let item = dataHelper.getItem(itemQuery);
@@ -166,21 +166,21 @@ module.exports = {
                         output += 's';
                     }
 
-                    if (userAmount == 0) { return message.channel.send(`You do not have any ${output} to sell.`); }
-                    if (userAmount < amount) { return message.channel.send(`You do not have ${amount} ${output} to sell`); }
-                    if (!item.sellable) { return message.channel.send(`${item.name} can not be sold.`); }
-                    if (shopBalance < totalCost) { return message.channel.send('The shop can not afford this transaction.'); }
+                    if (userAmount == 0) { return message.reply(`You do not have any ${output} to sell.`); }
+                    if (userAmount < amount) { return message.reply(`You do not have ${amount} ${output} to sell`); }
+                    if (!item.sellable) { return message.reply(`${item.name} can not be sold.`); }
+                    if (shopBalance < totalCost) { return message.reply('The shop can not afford this transaction.'); }
 
                     await dataHelper.updateItemForAccount(userAccount, identifier, userAmount-amount);
                     await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+amount);
                     await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalCost);
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalCost);
 
-                    return message.channel.send(`Sold ${amount} ${output} for ${totalCost} ${money}`);
+                    return message.reply(`Sold ${amount} ${output} for ${totalCost} ${money}`);
                 } else if(tool) {
-                    return message.channel.send('You can not sell Tools or Appliances.');
+                    return message.reply('You can not sell Tools or Appliances.');
                 } else {
-                    return message.channel.send(`${itemQuery.replace('@', '')} is not a valid item.`);
+                    return message.reply(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }
             } else if (subCommand === 'sellall') {
                 let totalSold = 0;
@@ -188,16 +188,22 @@ module.exports = {
 
                 for (var it in userInventory) {
                     let item = userInventory[it];
-                    if (item.amount > 0) {
-                        let identifier = item.localized;
-                        let shopAmount = shopInventory[identifier]['amount'];
-                        let count = item.amount;
-                        let totalCost = item.sell*count;
-                        totalSold += count;
-                        totalGain += totalCost;
-                        await dataHelper.updateItemForAccount(userAccount, identifier, 0);
-                        await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+count);   
+                    if (item.sellable) {
+                        if (item.amount > 0) {
+                            let identifier = item.localized;
+                            let shopAmount = shopInventory[identifier]['amount'];
+                            let count = item.amount;
+                            let totalCost = item.sell*count;
+                            totalSold += count;
+                            totalGain += totalCost;
+                            await dataHelper.updateItemForAccount(userAccount, identifier, 0);
+                            await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+count);   
+                        }
                     }
+                }
+
+                if (totalSold == 0) {
+                    return message.reply(`you have nothing to sell.`);
                 }
 
                 await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalGain);
