@@ -84,7 +84,7 @@ module.exports = {
 
         if (!smeltResult) { return message.channel.send(`The smelt result for ${smeltItem.name} has not been defined. **Your items have not been used.**`); }
 
-        let smeltResultAmount = smeltItem.smeltResultAmount;
+        let smeltResultAmount = smeltItem.smeltResultAmount * smeltItemAmount;
 
         if (smeltResultAmount == 0) { return message.channel.send(`The smelt result amount for ${smeltItem.name} has not been defined. **Your items have not been used.**`); }
 
