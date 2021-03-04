@@ -49,11 +49,11 @@ module.exports = {
                 modifier = Math.min(inv['raw_meat']['amount'], 20);
             }
 
-            let findChance = Math.floor(Math.random()*1000);
-            if (findChance == 273) {
-                let caughtChance = Math.floor(Math.random()*50);
+            let findChance = Math.floor(Math.random()*50);
+            if (findChance == 27) {
+                let caughtChance = Math.floor(Math.random()*100);
 
-                if (caughtChance == 36) {
+                if (caughtChance <= 25) {
                     //caught by bear, lose everything.
                     let lost = false;
 
