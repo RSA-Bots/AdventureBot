@@ -180,11 +180,13 @@ module.exports = {
         updateAccount(account.holderId, account);
     },
 
-    updateItemForAccount: function(account, item, newAmount) {
+    updateItemForAccount: function(account, item, amountToAdd) {
         if (!account.inventory[0][item]) {
             account.inventory[0][item] = this.getItem(item);
         }
-        account.inventory[0][item]['amount'] = newAmount;
+        let amount = account.inventory[0][item]['amount'] + amountToAdd
+        account.inventory[0][item]['amount'] = amount;
+
         updateAccount(account.holderId, account);
     },
 

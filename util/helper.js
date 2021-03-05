@@ -108,5 +108,5 @@ module.exports = {
         }
 
         return displayNameCache[id];
-    }
+    },
 }

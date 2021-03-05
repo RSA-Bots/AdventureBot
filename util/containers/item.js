@@ -41,6 +41,8 @@ module.exports = {
     'rock': createItem('Rock', 'a Rock', 'Rocks', 2, 1, 0, 16, 'rock', 'Items', 'Common', 0, true, true),
     'bone': createItem('Bone', 'a Bone', 'Bones', 12, 7, 0, 17, 'bone', 'Items', 'Common', 0, true, true),
     'shell': createItem('Shell', 'a Shell', 'Shells', 5, 2, 0, 18, 'shell', 'Items', 'Common', 0, true, true),
+    'sand': createItem('Sand', 'a piece of Sand', 'pieces of Sand', 2, 1, 0, 19, 'sand', 'Items', 'Common', 0, true, true),
+    'cactus': createItem('Cactus', 'a Cactus', 'Cactus', 6, 2, 0, 20, 'cactus', 'Items', 'Common', 0, true, true),
     'femboy': createItem('Femboy', 'a Femboy', 'Femboys', 0, 0, 0, 69, 'femboy', 'Collectables', 'Forbidden', 0, false, false),
     'manifesto': createItem('The Scala Manifesto', 'The Scala Manifesto', 'copies of The Scala Manifesto', 0, 0, 0, 1235700381, 'manifesto', 'Collectables', 'Forbidden', 0, false, false),
     'planet': createItem('Planet', 'a Planet', 'Planets', 0, 0, 0, 720, 'planet', 'Collectables', 'Forbidden', 0, false, false),

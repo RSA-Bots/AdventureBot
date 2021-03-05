@@ -102,5 +102,12 @@ client.on('message', message => {
     }
 });
 
+let timeSystem = require('./util/timeSystem');
+
+let i = setInterval(function() {
+    timeSystem.start(client);
+    clearInterval(i);
+}, 5000)
+
 client.options.disableMentions = 'everyone';
 client.login(token);
