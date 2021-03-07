@@ -41,7 +41,7 @@ module.exports = {
     description: 'Explore a specific location',
     args: true,
     usage: '<location>',
-    cooldown: 7,
+    cooldown: 11,
     guildOnly: true,
     async execute(message, args) {
         let location = args.join(' ');

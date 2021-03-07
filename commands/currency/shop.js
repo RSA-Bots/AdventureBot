@@ -93,9 +93,12 @@ module.exports = {
 
             let subCommand = args[0].toLowerCase();
             let amount = 1;
+            let all = false;
             let sliceFrom = 2;
             if (parseInt(args[1])) {
                 amount = parseInt(args[1]);
+            } else if(args[1] == 'all') {
+                all = true;
             } else {
                 sliceFrom = 1;
             }
@@ -121,6 +124,9 @@ module.exports = {
                     let shopAmount = shopInventory[identifier]['amount'];
                     let userAmount = userInventory[identifier]['amount'];
                     let worth = item.buy;
+                    if (all) {
+                        amount = shopAmount
+                    }
                     let totalCost = worth * amount;
                     if (amount > 1) {
                         output += 's';
@@ -133,8 +139,8 @@ module.exports = {
 
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance-totalCost);
                     await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance+totalCost);
-                    await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount-amount);
-                    await dataHelper.updateItemForAccount(userAccount, identifier, userAmount+amount);
+                    await dataHelper.updateItemForAccount(shopAccount, identifier, -amount);
+                    await dataHelper.updateItemForAccount(userAccount, identifier, amount);
 
                     return message.reply(`Bought ${amount} ${output} for ${totalCost} ${money}`);
                 } else if(tool) {
@@ -151,6 +157,32 @@ module.exports = {
                 } else {
                     return message.reply(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }
+            } else if (subCommand === 'sellall' || subCommand == 'sell' && args[1] == 'all') {
+                let totalSold = 0;
+                let totalGain = 0;
+
+                for (var it in userInventory) {
+                    let item = userInventory[it];
+                    if (item.sellable) {
+                        if (item.amount > 0) {
+                            let identifier = item.localized;
+                            let count = item.amount;
+                            let totalCost = item.sell*count;
+                            totalSold += count;
+                            totalGain += totalCost;
+                            await dataHelper.updateItemForAccount(userAccount, identifier, -count);
+                            await dataHelper.updateItemForAccount(shopAccount, identifier, count);   
+                        }
+                    }
+                }
+
+                if (totalSold == 0) {
+                    return message.reply(`you have nothing to sell.`);
+                }
+
+                await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalGain);
+                await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalGain);
+                return message.reply(`successfully sold ${totalSold} items for ${totalGain} ${money}`)
             } else if (subCommand === 'sell') {
                 let item = dataHelper.getItem(itemQuery);
                 let tool = dataHelper.getTool(itemQuery);
@@ -171,8 +203,8 @@ module.exports = {
                     if (!item.sellable) { return message.reply(`${item.name} can not be sold.`); }
                     if (shopBalance < totalCost) { return message.reply('The shop can not afford this transaction.'); }
 
-                    await dataHelper.updateItemForAccount(userAccount, identifier, userAmount-amount);
-                    await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+amount);
+                    await dataHelper.updateItemForAccount(userAccount, identifier, -amount);
+                    await dataHelper.updateItemForAccount(shopAccount, identifier, amount);
                     await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalCost);
                     await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalCost);
 
@@ -182,34 +214,7 @@ module.exports = {
                 } else {
                     return message.reply(`${itemQuery.replace('@', '')} is not a valid item.`);
                 }
-            } else if (subCommand === 'sellall') {
-                let totalSold = 0;
-                let totalGain = 0;
-
-                for (var it in userInventory) {
-                    let item = userInventory[it];
-                    if (item.sellable) {
-                        if (item.amount > 0) {
-                            let identifier = item.localized;
-                            let shopAmount = shopInventory[identifier]['amount'];
-                            let count = item.amount;
-                            let totalCost = item.sell*count;
-                            totalSold += count;
-                            totalGain += totalCost;
-                            await dataHelper.updateItemForAccount(userAccount, identifier, 0);
-                            await dataHelper.updateItemForAccount(shopAccount, identifier, shopAmount+count);   
-                        }
-                    }
-                }
-
-                if (totalSold == 0) {
-                    return message.reply(`you have nothing to sell.`);
-                }
-
-                await dataHelper.updateBalanceForAccount(shopAccount, 'tix', shopBalance-totalGain);
-                await dataHelper.updateBalanceForAccount(userAccount, 'tix', userBalance+totalGain);
-                return message.reply(`successfully sold ${totalSold} items for ${totalGain} ${money}`)
-            }
+            } 
         }
     }
 }

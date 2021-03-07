@@ -19,20 +19,25 @@ function getState() {
     if (hour >= 21) return 'Night';
 }
 
-async function announceDayChange() {
-    let guild = await Client.guilds.resolve(guildId);
-    
-    if (guild) {
-        let channel = await guild.channels.resolve(announceChannelId);
+async function announceDayChange(inChannel) {
+    if (inChannel) {
+        let guild = await Client.guilds.resolve(guildId);
+        
+        if (guild) {
+            let channel = await guild.channels.resolve(announceChannelId);
 
-        if (channel) {
-            // return channel.send(`Day ${day} - Hour ${hour} [${getState()}]`);
+            if (channel) {
+                channel.send(`Day ${day}`);
+                
+            } else {
+                console.log('No channel.');
+            }
         } else {
-            console.log('No channel.');
+            console.log('No guild.');
         }
-    } else {
-        console.log('No guild.');
     }
+
+    return Client.user.setPresence({ activity: { name: `Day ${day} - Hour ${hour} [${getState()}]`, type: 'WATCHING'} })
 }
 
 module.exports = {
