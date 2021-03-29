@@ -1,4 +1,3 @@
-const dataHelper = require('./dataHelper');
 const helper = require('./helper');
 
 const { guildId, announceChannelId } = require('../config.json')

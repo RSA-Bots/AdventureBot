@@ -1,0 +1,20 @@
+{
+    "1": {
+        "name": "Sword",
+        "buy": 0,
+        "sell": 0,
+        "atk": 5
+    },
+    "2": {
+        "name": "Bow",
+        "buy": 0,
+        "sell": 0,
+        "atk": 0
+    },
+    "3": {
+        "name": "Stick",
+        "buy": 0,
+        "sell": 0,
+        "atk": 1
+    }
+}

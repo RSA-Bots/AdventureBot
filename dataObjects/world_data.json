@@ -1,0 +1,95 @@
+{
+    "area_1": {
+        "cities": {
+            "bastion": {
+                "name": "Bastion",
+                "localized": "bastion",
+                "description": "",
+                "pos": {"x": 421, "y": 328 },
+                "shops": {},
+                "size": 3
+            },
+            "cey": {
+                "name": "Cey",
+                "localized": "cey",
+                "description": "",
+                "pos": {"x": 175, "y": 532 },
+                "shops": {},
+                "size": 2
+            },
+            "indiff": {
+                "name": "Indiff",
+                "localized": "indiff",
+                "description": "",
+                "pos": {"x": 466, "y": 470 },
+                "shops": {},
+                "size": 1
+            },
+            "greving": {
+                "name": "Greving",
+                "localized": "greving",
+                "description": "",
+                "pos": {"x": 133, "y": 732 },
+                "shops": {},
+                "size": 1
+            },
+            "deepridge": {
+                "name": "Deepridge",
+                "localized": "deepridge",
+                "description": "",
+                "pos": {"x": 502, "y": 761 },
+                "shops": {},
+                "size": 4
+            },
+            "wheaton": {
+                "name": "Wheaton",
+                "localized": "wheaton",
+                "description": "",
+                "pos": {"x": 237, "y": 1084 },
+                "shops": {},
+                "size": 1
+            },
+            "elesburn": {
+                "name": "Elesburn",
+                "localized": "elesburn",
+                "description": "",
+                "pos": {"x": 292, "y": 1372 },
+                "shops": {},
+                "size": 4
+            },
+            "gren": {
+                "name": "Gren",
+                "localized": "gren",
+                "description": "",
+                "pos": {"x": 626, "y": 1384 },
+                "shops": {},
+                "size": 1
+            }
+        },
+        "dungeons": {
+            "the_deeps": {
+                "name": "The Deeps",
+                "localized": "the_deeps",
+                "description": "",
+                "pos": {"x": 217, "y": 312 },
+                "size": 1
+            }
+        }
+    },
+    "area_2": {
+        "cities": {},
+        "dungeons": {}
+    },
+    "area_3": {
+        "cities": {},
+        "dungeons": {}
+    },
+    "area_4": {
+        "cities": {},
+        "dungeons": {}
+    },
+    "area_5": {
+        "cities": {},
+        "dungeons": {}
+    }
+}

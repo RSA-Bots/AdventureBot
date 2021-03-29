@@ -17,8 +17,9 @@
   },
   "homepage": "https://gitlab.com/rsa-bots/adventurebot#readme",
   "dependencies": {
+    "canvas": "^2.7.0",
     "discord.js": "^12.5.1",
-    "mongoose": "^5.11.17",
+    "mongoose": "^5.11.19",
     "mongoose-long": "^0.3.2"
   }
 }
