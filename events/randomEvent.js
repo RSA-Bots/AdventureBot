@@ -74,7 +74,21 @@ let events = {
     },
     3: {
         name: "Nothing",
-        weight: 10
+        weight: 10,
+        list: {
+            0: {
+                s: "A bird flew over and startled you.",
+                weight: 4
+            },
+            1: {
+                s: "That annoying sweat bee has been bothering you for quite some time.",
+                weight: 4
+            },
+            2: {
+                s: "You ponder what it would be like arriving at your destination.",
+                weight: 4
+            }
+        }
     }
 };
 
@@ -103,13 +117,31 @@ module.exports = {
 
         let eventPick = Math.floor(Math.random() * eventChances.length);
         let eventData = events[eventChances[eventPick]];
-
+        
         let retData = {}
 
+        retData['event'] = eventData.name;
+
         if (eventData.name === 'Nothing') {
-            retData['message'] = "Bummer! Your event was a dud."
+            let phrases = eventData.list;
+            let phraseChances = [];
+
+            for (var phrase in phrases) {
+                for (var i=0;i<phrases[phrase].weight;i++) {
+                    phraseChances.push(phrase);
+                }
+            }
+
+            for (var i=0;i<5;i++) {
+                phraseChances = shuffle(phraseChances);
+            }
+
+            let phrasePick = Math.floor(Math.random() * phraseChances.length);
+            let phraseData = phrases[phraseChances[phrasePick]];
+
+            retData['result'] = phraseData.s;
         } else if(eventData.name === 'Hitchhike') {
-            retData['message'] = "Lucky! You got a ride from a random stranger! (Shortened your trip by 30 in-game minutes)"
+            retData['result'] = "Lucky! You got a ride from a random stranger! (Shortened your trip by 30 in-game minutes)"
         } else if(eventData.name === 'Find') {
             let items = eventData.list;
             let itemChances = [];
@@ -130,7 +162,7 @@ module.exports = {
             if (itemData.name === 'money') {
                 let amount = Math.floor(Math.random() * (itemData.max - itemData.min)) + itemData.min;
 
-                retData['message'] = `You found ${amount} money.`
+                retData['result'] = `You found ${amount} money.`
             } else if(itemData.name === 'item') {
                 let aItems = itemData.list;
                 let aItemChances = [];
@@ -148,10 +180,10 @@ module.exports = {
                 let aItemPick = Math.floor(Math.random() * aItemChances.length);
                 let aItemData = aItems[aItemChances[aItemPick]];
 
-                retData['message'] = `You found ${aItemData.name}.`
+                retData['result'] = `You found ${aItemData.name}.`
             }
         } else if(eventData.name === 'Fight') {
-            retData['message'] = "You got into a fight. You probably lost.."
+            retData['result'] = "You got into a fight. You probably lost.."
         }
 
         return retData;
