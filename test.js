@@ -1,7 +1,17 @@
-const event = require('./events/randomEvent');
+const randomEvent = require('./events/randomEvent');
 
-for (var i=0;i<10;i++) {
-    let result = event.run();
-
-    console.log(result);
+async function test10() {
+    for (var i=0;i<10;i++) {
+        let { event, result, error } = await randomEvent.run();
+    
+        if (error) {
+            //message.reply(error);
+            console.log(error);
+        } else {
+            //message.reply();
+            console.log(`Type: ${event}\nResult: ${result}\n`);
+        }
+    }
 }
+
+test10();
