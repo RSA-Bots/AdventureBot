@@ -42,11 +42,16 @@ module.exports = {
         if (playerLocation.location && playerLocation.location == destination) { return message.reply(`You are already at ${locationData.name}.`); }
 
         let currentArea = helper.world.getCityArea(playerLocation.location);
+        if (currentArea == -1) {
+            currentArea = playerLocation.location;
+        }
         let destinationArea = helper.world.getCityArea(destination);
 
         if (currentArea != destinationArea) { return message.reply(`You are unable to travel to a different area. You either lack a boat, or airship.`); }
 
-        let distance = Math.floor(helper.world.getDistanceToCity(playerLocation.location, destination))
+        let playerPosition = await helper.user.getPosition(userId);
+
+        let distance = Math.floor(helper.world.getDistanceToCity(playerPosition, destination))
         let speed = 2.7; //in-game speed pixels per minute
         let realTime = Math.floor(distance / (4 * speed));
 
@@ -55,7 +60,13 @@ module.exports = {
          *                  4 in-game min  = 1 irl minute
          */
 
-        helper.travel.startTravel(message, userId, helper.world.getCityData(playerLocation.location), locationData, realTime*60, 3);
+        let startLocation = helper.world.getCityData(playerLocation.location);
+        if (!startLocation) {
+            startLocation = helper.world.getAreaData(playerLocation.location);
+            startLocation['pos'] = playerPosition.pos;
+        }
+
+        await helper.travel.startTravel(message, userId, startLocation, locationData, realTime*60, 3);
 
         return message.reply(`Traveling to ${locationData.name}\nDistance: ${distance}px\nSpeed: ${speed}pxm\nReal Time: ${realTime*60} seconds`);
     }
