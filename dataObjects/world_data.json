@@ -1,5 +1,7 @@
 {
     "area_1": {
+        "name": "Area 1",
+        "localized": "area_1",
         "cities": {
             "bastion": {
                 "name": "Bastion",
