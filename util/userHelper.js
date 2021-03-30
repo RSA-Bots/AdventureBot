@@ -100,10 +100,10 @@ module.exports = {
         if (!isAccountLoaded(userId)) { error = await this.loadAccount(userId); }
 
         if (error) {
-            return {position: {}, error: error}
+            return {pos: {}, error: error}
         }
 
-        return {position: {
+        return {pos: {
             x: loadedAccounts[userId]['posX'],
             y: loadedAccounts[userId]['posY']
         }}

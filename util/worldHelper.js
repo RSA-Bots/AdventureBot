@@ -38,7 +38,7 @@ module.exports = {
     },
 
     getDistanceToCity: function (start, destination) {
-        const pos1 = this.getCityData(start).pos;
+        const pos1 = start.pos;
         const pos2 = this.getCityData(destination).pos;
 
         return Math.sqrt(Math.pow((pos2.y-pos1.y), 2)+Math.pow((pos2.x-pos1.x), 2));
