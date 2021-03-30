@@ -29,14 +29,14 @@ module.exports = {
         const avatarImg = (gender == 'male') ? './res/male_sprite_default.png' : './res/female_sprite_default.png';
         const avatar = await Canvas.loadImage(avatarImg);
 
-        let pos = location.position;
-        console.log(`UserX: ${pos.x}`);
-        console.log(`UserY: ${pos.y}`);
+        let pos = location.pos;
 
         ctx.drawImage(avatar, pos.x - 34, pos.y - 50, 68, 100);
 
         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'map-bg.png');
 
-        message.reply('You are here!', attachment);
+        let userLoc = await helper.user.getLocation(userId);
+
+        message.reply(`You are currently in ${userLoc.location}!`, attachment);
     }
 }
